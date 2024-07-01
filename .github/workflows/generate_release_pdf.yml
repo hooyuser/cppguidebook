@@ -42,14 +42,16 @@ jobs:
           # print the first 10 lines of the file
           head -n 10 ./cv/noto_sans_sc_raw.txt
 
-      - name: process font metadata
-        run: |
-          
           # Remove ")]}'" from the beginning of the file
           tail -c +5 ./cv/noto_sans_sc_raw.txt > ./cv/noto_sans_sc_metadata.json
           
           # Extract the necessary information from the JSON file
           file_refs=$(jq -rc '.manifest.fileRefs[]' ./cv/noto_sans_sc_metadata.json)
+
+      - name: process font metadata
+        run: |
+          
+          
     
           # Download, rename the font files and save to ./fonts
           while IFS= read -r file_ref; do
