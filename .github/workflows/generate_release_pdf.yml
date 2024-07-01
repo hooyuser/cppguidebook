@@ -26,8 +26,8 @@ jobs:
 
       - name: Compile Typst document
         run: |
-          typst fonts --variants --font-path fonts
-          typst compile ${{ env.TYPST_FILE_NAME }}.typ ${{ env.TYPST_FILE_NAME }}.pdf  --font-path fonts
+          typst fonts --variants
+          typst compile ${{ env.TYPST_FILE_NAME }}.typ ${{ env.TYPST_FILE_NAME }}.pdf 
 
       - name: Delete old Release
         uses: actions/github-script@v5
