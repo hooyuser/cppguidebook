@@ -21,46 +21,48 @@ jobs:
       - name: Set up Git repository for secondary repo
         uses: actions/checkout@v4
      
-      - name: Install Fonts
+      - name: Install jq if not present
         run: |
           if ! command -v jq &> /dev/null
           then
             echo "jq could not be found, installing..."
-            sudo apt install -y jq
+            sudo apt-get install -y jq
           fi
-
-          mkdir -p /cv
-
+    
+      - name: Prepare directories
+        run: |
+          mkdir -p ./cv
+          mkdir -p ./fonts
+    
+      - name: Download and process font metadata
+        run: |
           # Download Sarabun font metadata
-          curl -s "https://fonts.google.com/download/list?family=Noto%20Sans%20SC" > cv/noto_sans_sc_raw.txt
-
+          curl -s "https://fonts.google.com/download/list?family=Noto%20Sans%20SC" > ./cv/noto_sans_sc_raw.txt
+          
           # Remove ")]}'" from the beginning of the file
-          tail -c +5 cv/noto_sans_sc_raw.txt > cv/noto_sans_sc_metadata.json
-
+          tail -c +5 ./cv/noto_sans_sc_raw.txt > ./cv/noto_sans_sc_metadata.json
+          
           # Extract the necessary information from the JSON file
-          file_refs=$(jq -rc '.manifest.fileRefs[]' cv/noto_sans_sc_metadata.json)
-
-          mkdir -p /fonts
-
-          # Download, rename the font files and save to /fonts
+          file_refs=$(jq -rc '.manifest.fileRefs[]' ./cv/noto_sans_sc_metadata.json)
+    
+          # Download, rename the font files and save to ./fonts
           while IFS= read -r file_ref; do
               filename=$(echo "$file_ref" | jq -r '.filename')
               url=$(echo "$file_ref" | jq -r '.url')
-              curl -s "$url" -o "/fonts/$filename"
+              curl -s "$url" -o "./fonts/$filename"
           done <<< "$file_refs"
-
-          rm cv
-
+    
+          rm -r ./cv
+    
           echo "Font downloaded."
-
-          ls -l /fonts/
-
+    
+      - name: List downloaded fonts
+        run: |
+          ls -l ./fonts/
           # file Noto_Sans_SC.zip
           # unzip -d Noto_Sans_SC/ Noto_Sans_SC.zip
           # mv Noto_Sans_SC/static /usr/share/fonts/
           # fc-cache -fv
-
-
 
       - name: Check Fonts Existence
         id: check-fonts
