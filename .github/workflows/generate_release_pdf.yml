@@ -38,6 +38,12 @@ jobs:
         run: |
           # Download Sarabun font metadata
           curl -s "https://fonts.google.com/download/list?family=Noto%20Sans%20SC" > ./cv/noto_sans_sc_raw.txt
+
+          # print the first 10 lines of the file
+          head -n 10 ./cv/noto_sans_sc_raw.txt
+
+      - name: process font metadata
+        run: |
           
           # Remove ")]}'" from the beginning of the file
           tail -c +5 ./cv/noto_sans_sc_raw.txt > ./cv/noto_sans_sc_metadata.json
