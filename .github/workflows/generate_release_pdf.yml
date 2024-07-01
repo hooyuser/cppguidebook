@@ -24,6 +24,8 @@ jobs:
       - name: Install Fonts
         run: |
           wget -O Noto_Sans_SC.zip https://fonts.google.com/download?family=Noto%20Sans%20SC
+          echo "Font downloaded."
+          ls -l
           unzip -d Noto_Sans_SC/ Noto_Sans_SC.zip
           mv Noto_Sans_SC/static /usr/share/fonts/
           fc-cache -fv
