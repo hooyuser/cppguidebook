@@ -33,7 +33,7 @@ jobs:
         if: steps.cache-fonts.outputs.cache-hit != 'true'
         run: |
           if [ -f "${{ env.TYPST_FONT_PATH }}/NotoSansSC-Regular.ttf" ]; then
-            echo "Font already cached."
+            echo "Font already existed."
           else
             # Download font metadata
             mkdir -p cv
