@@ -45,6 +45,7 @@ jobs:
 
       - name: Process and Download Fonts
         run: |
+          mkdir -p cv
           # Download Sarabun font
           curl -s "https://fonts.google.com/download/list?family=Sarabun" > cv/sarabun_metadata_raw.txt
           # Remove ")]}'" from the beginning of the file
