@@ -3,7 +3,7 @@ name: Generate Release PDF
 on: 
   push:
     branches:
-      - main
+      # - main
       - workflow
     paths-ignore:
       - '.gitignore'
