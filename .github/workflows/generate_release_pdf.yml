@@ -29,20 +29,24 @@ jobs:
             sudo apt-get install -y jq
           fi
     
-      - name: Prepare directories
-        run: |
-          mkdir -p ./cv
-          mkdir -p ./fonts
+      # - name: Prepare directories
+      #   run: |
+      #     mkdir -p ./cv
+      #     mkdir -p ./fonts
 
-      - name: test
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Download Metadata
         run: |
-          sudo apt-get install jq
-          curl -s "https://fonts.google.com/download/list?family=Sarabun" > cv/sarabun_metadata_raw.txt
+          curl -s "https://fonts.google.com/download/list?family=Sarabun" > sarabun_metadata_raw.txt
           # Remove ")]}'" from the beginning of the file
-          tail -c +5 cv/sarabun_metadata_raw.txt > cv/sarabun_metadata.json
-          # Extract the necessary information from the JSON file
-          file_refs=$(jq -rc '.manifest.fileRefs[]' cv/sarabun_metadata.json)
-          # Download, rename the font files and save to ~/.fonts
+          tail -c +5 sarabun_metadata_raw.txt > sarabun_metadata.json
+
+      - name: Process and Download Fonts
+        run: |
+          mkdir -p ~/.fonts
+          file_refs=$(jq -rc '.manifest.fileRefs[]' sarabun_metadata.json)
           while IFS= read -r file_ref; do
               filename=$(echo "$file_ref" | jq -r '.filename')
               url=$(echo "$file_ref" | jq -r '.url')
