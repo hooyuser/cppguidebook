@@ -23,7 +23,7 @@ jobs:
 
       - name: Process and Download Fonts
         run: |
-          # Download font
+          # Download font metadata
           mkdir -p cv
           curl -s "https://fonts.google.com/download/list?family=Noto%20Sans%20SC" > cv/noto_sans_sc_raw.txt
 
@@ -33,8 +33,7 @@ jobs:
           # Extract the necessary information from the JSON file
           file_refs=$(jq -rc '.manifest.fileRefs[]' cv/noto_sans_sc_metadata.json)
 
-          # Download, save the font file to ~/.fonts
-          # We use temp fonts directory since curl cannot write directly to ~/.fonts
+          # Download, save the font file to /fonts
           mkdir -p fonts
           while IFS= read -r file_ref; do
               filename=$(echo "$file_ref" | jq -r '.filename')
@@ -48,7 +47,7 @@ jobs:
       - name: Check Fonts Existence
         id: check-fonts
         run: |
-          if [ -f "/usr/share/fonts/NotoSansSC-Regular.ttf" ]; then
+          if [ -f "fonts/NotoSansSC-Regular.ttf" ]; then
             echo "Font already cached."
             echo "::set-output name=font_exists::true"
           else
