@@ -46,12 +46,12 @@ jobs:
       - name: Process and Download Fonts
         run: |
           mkdir -p cv
-          # Download Sarabun font
-          curl -s "https://fonts.google.com/download/list?family=Sarabun" > cv/sarabun_metadata_raw.txt
+          # Download font
+          curl -s "https://fonts.google.com/download/list?family=Noto%20Sans%20SC" > cv/noto_sans_sc_raw.txt
           # Remove ")]}'" from the beginning of the file
-          tail -c +5 cv/sarabun_metadata_raw.txt > cv/sarabun_metadata.json
+          tail -c +5 cv/noto_sans_sc_raw.txt > cv/noto_sans_sc_metadata.json
           # Extract the necessary information from the JSON file
-          file_refs=$(jq -rc '.manifest.fileRefs[]' cv/sarabun_metadata.json)
+          file_refs=$(jq -rc '.manifest.fileRefs[]' cv/noto_sans_sc_metadata.json)
           # Download, save the font file to ~/.fonts
           # We use temp fonts directory since curl cannot write directly to ~/.fonts
           mkdir -p fonts ~/.fonts
@@ -61,7 +61,7 @@ jobs:
               echo $url $filename
               curl "$url" -o "fonts/$filename"
           done <<< "$file_refs"
-          ls -l ~/.fonts/
+          ls -l fonts/
     
       # - name: Download and process font metadata
       #   run: |
