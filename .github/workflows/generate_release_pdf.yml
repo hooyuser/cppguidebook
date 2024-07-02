@@ -11,6 +11,7 @@ on:
 
 env:
   TYPST_FILE_NAME: book
+  TYPST_FONT_PATH: fonts
 
 jobs:
   build_typst:
@@ -31,7 +32,7 @@ jobs:
       - name: Download Fonts
         if: steps.cache-fonts.outputs.cache-hit != 'true'
         run: |
-          if [ -f "fonts/NotoSansSC-Regular.ttf" ]; then
+          if [ -f "${{ env.TYPST_FONT_PATH }}/NotoSansSC-Regular.ttf" ]; then
             echo "Font already cached."
           else
             # Download font metadata
@@ -45,15 +46,15 @@ jobs:
             file_refs=$(jq -rc '.manifest.fileRefs[]' cv/noto_sans_sc_metadata.json)
 
             # Download, save the font file to /fonts
-            mkdir -p fonts
+            mkdir -p ${{ env.TYPST_FONT_PATH }}
             while IFS= read -r file_ref; do
                 filename=$(echo "$file_ref" | jq -r '.filename')
                 url=$(echo "$file_ref" | jq -r '.url')
                 fontname=$(basename "$filename")
                 echo $url $fontname
-                curl "$url" -o "fonts/$fontname"
+                curl "$url" -o "${{ env.TYPST_FONT_PATH }}/$fontname"
             done <<< "$file_refs"
-            ls -l fonts/
+            ls -l ${{ env.TYPST_FONT_PATH }}
           fi
 
       - name: Prepare Typst environment
@@ -61,8 +62,8 @@ jobs:
 
       - name: Compile Typst document
         run: |
-          typst fonts --variants --font-path fonts
-          typst compile ${{ env.TYPST_FILE_NAME }}.typ ${{ env.TYPST_FILE_NAME }}.pdf --font-path fonts
+          typst fonts --variants --font-path ${{ env.TYPST_FONT_PATH }}
+          typst compile ${{ env.TYPST_FILE_NAME }}.typ ${{ env.TYPST_FILE_NAME }}.pdf --font-path ${{ env.TYPST_FONT_PATH }}
 
       - name: Delete old Release
         uses: actions/github-script@v5
